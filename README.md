@@ -1,20 +1,16 @@
-# Solo (Small Only Look Once)
-A Small CNN Model (20M parameters) similar to the **YOLO v1** model structure.
+# SOLO (Small Only Look Once)
+A Small CNN Model (15M parameters) similar to the **YOLO v1** model structure.
 
-In this repo, i have translated the YOLO v1 structure in a relatively small model structure (**20M paramters**), i have built my labels by using the min-max x/y coordinates from the VOC 2012 dataset and the image size, the pre-processing basically rescales the images, normalizes the coordinate values and the bounding box width and height.
+## How does it work
+During the Preprocess, each image from the training dataset gets a custom grid-like label as a numpy array. This makes the model and the loss functions able to correctly subdivide the image in the requested grid, and for each grid the model will predict 5 things:
+- norm x
+- norm y
+- width
+- height
+- confidence
 
-After that the pre-process gets which cells in the final grid the found object is centered in, and checks if the confidence in that one specific cell has already been occupied by another object (if it's 1.0 already, we skip the object).
+And along with this, the model will also predict 20 classes in One Hot Encoding style.
 
-I have then wrapped the model for simple inference usage with **FastAPI** and a minimal web/HTML interface.
+The training process is straightforward, I use a cosine decay schedule for the LR warmup, then the model runs through a minimum of 100 epochs, writing in a log file all the losses.
 
-## Key points in this architecture:
-- Built with a grid based structure, with 1 bbox for each cell.
-- Capable of classifying 20 classes from the VOC 2012 dataset.
-- Training VRAM usage <3.3 GB, on a RTX 3060 12GB GPU.
-
-## About me
-I am a Junior Developer who's studying to specialize in ML/DL, building skills beyond simply using pre-made architectures or libraries.
-
-I have already built and completed a few projects:
-- An **Encoder Transformer** (Here! https://github.com/SaruboDev/BertJax) with **300M parameters**, pre-trained on an RTX 3060 12GB GPU and under 8GB of training VRAM used.
-- An **Autodiff engine with Dynamic Computational Graphs** in Python, complete with SGD and Adam optimizers, Softmax and Linear layers! (Here! https://github.com/SaruboDev/Neutron-Python)
+During Training the model uses 3.4Gb of VRAM on a RTX 3060 12Gb GPU, thanks to a few optimization techniques used in the model's architecture, like gradient checkpointing.
