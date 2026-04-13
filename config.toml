@@ -1,6 +1,6 @@
 [images]
-ann_path = "VOC2012/Annotations"
-img_path = "VOC2012/JPEGImages"
+ann_path = "/Annotations"
+img_path = "/JPEGImages"
 
 image_w     = 896
 image_h     = 512
